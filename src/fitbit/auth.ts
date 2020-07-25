@@ -20,7 +20,6 @@ type Token = string;
 export function auth({ url, apiKey, apiSecret }: AuthKey) {
   async function authenticate() {
     const token = new Buffer(`${apiKey}:${apiSecret}`).toString("base64");
-    debugger;
     const payload = {
       grant_type: "client_credentials",
       expires_in: 3600,
