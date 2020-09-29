@@ -1,8 +1,17 @@
+/**
+ * Fitbit metrics requests
+ * Docs: https://dev.fitbit.com/build/reference/web-api/
+ */
 import { Token } from "./auth";
 import axios from "axios";
 
-export async function sleep(accessToken: Token, userId: String) {
-  const URL = `https://api.fitbit.com/1.2/user/${userId}/sleep/date/2020-07-25.json`;
+/**
+ * The date of records to be returned. In the format yyyy-MM-dd
+ */
+export type Date = string;
+
+export async function sleep(accessToken: Token, userId: String, date: Date) {
+  const URL = `https://api.fitbit.com/1.2/user/${userId}/sleep/date/${date}.json`;
   const result = await axios.get(URL, {
     headers: {
       Authorization: `Bearer ${accessToken}`,

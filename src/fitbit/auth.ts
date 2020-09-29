@@ -1,5 +1,6 @@
 import axios from "axios";
 import qs from "qs";
+import { RefreshTokenManager } from "./refreshTokenManager";
 
 export interface AuthKey {
   tokenUrl: string;
@@ -8,13 +9,14 @@ export interface AuthKey {
 }
 
 export interface AccessToken {
-  access_token: string;
+  access_token: Token;
+  refresh_token: Token;
   expires_in: number;
   scope: string;
   token_type: string;
 }
 
-export type Token = String;
+export type Token = string;
 
 /**
  * Performs a client credentials grant authentication.
@@ -34,14 +36,24 @@ export async function clientCredentials(key: AuthKey) {
  * Redeems a refresh token from the Authorization Code Flow.
  * @param key the Authentication key.
  *            Register a new app at the following link to get a key: https://dev.fitbit.com/apps
- * @param refreshToken the refresh token obtained by following the oauth tutorial on fitbit website.
+ * @param refreshTokenManager token manager that provides a valid refresh token.
+ *            The first token must be provided by following the tutorial on fitbit page:
+ *            https://dev.fitbit.com/apps/oauthinteractivetutorial
+ *            From there on, refresh tokens are invalidated as they are used, so one must keep
+ *            the new ones for future usage.
  */
-export async function authorizationCode(key: AuthKey, refreshToken: Token) {
+export async function authorizationCode(
+  key: AuthKey,
+  refreshTokenManager: RefreshTokenManager
+) {
+  const refreshToken = await refreshTokenManager.fetchToken();
   const payload = {
     grant_type: "refresh_token",
     refresh_token: refreshToken,
   };
-  return tokenRequest(key, payload);
+  const token = await tokenRequest(key, payload);
+  await refreshTokenManager.persistToken(token.refresh_token);
+  return token;
 }
 
 const tokenRequest = async (key: AuthKey, payload: any) => {
