@@ -17,5 +17,5 @@ export async function sleep(accessToken: Token, userId: String, date: Date) {
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  return result;
+  return result.data;
 }

@@ -9,7 +9,7 @@ export interface RefreshTokenManager {
 const FILE_NAME = "token.txt";
 const encoding = "utf-8";
 
-const FileTokenManager: RefreshTokenManager = {
+export const FileTokenManager: RefreshTokenManager = {
   persistToken: async (token) => {
     await fs.writeFile(FILE_NAME, token, encoding);
   },
