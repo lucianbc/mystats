@@ -1,14 +1,17 @@
 import "firebase-admin";
+import pathUtils from "path";
 
 export interface Persistor {
-  persist: (path: String, data: object) => Promise<void>;
+  persist: (path: string, data: object) => Promise<void>;
 }
 
 export const createFirebasePersistor = (
   firestore: FirebaseFirestore.Firestore
 ): Persistor => ({
   persist: async (path, data) => {
-    await firestore.collection(String(path)).add(data);
+    const collection = pathUtils.dirname(path);
+    const key = pathUtils.basename(path);
+    await firestore.collection(collection).doc(key).set(data);
   },
 });
 
