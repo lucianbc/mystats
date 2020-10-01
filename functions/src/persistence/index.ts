@@ -1,5 +1,5 @@
 import "firebase-admin";
-import pathUtils from "path";
+import * as pathUtils from "path";
 
 export interface Persistor {
   persist: (path: string, data: object) => Promise<void>;

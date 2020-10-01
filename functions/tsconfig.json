@@ -9,5 +9,5 @@
     "target": "es2017"
   },
   "compileOnSave": true,
-  "include": ["src", "../src"]
+  "include": ["src"]
 }

@@ -34,7 +34,7 @@ export const createFirebaseTokenManager = (
     },
     fetchToken: async () => {
       const document = await docHandle().get();
-      return document.data().refreshToken;
+      return document.data()?.refreshToken as string;
     },
   };
 };

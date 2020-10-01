@@ -1,5 +1,5 @@
 import axios from "axios";
-import qs from "qs";
+import * as qs from "qs";
 import { RefreshTokenManager } from "./refreshTokenManager";
 
 export interface AuthKey {

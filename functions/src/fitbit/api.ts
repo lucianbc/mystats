@@ -1,10 +1,10 @@
-import auth, { AuthKey, Token } from "./auth";
+import auth, { AuthKey } from "./auth";
 import * as metrics from "./metrics";
 import { Persistor } from "../persistence";
 import { RefreshTokenManager } from "./refreshTokenManager";
 
 export interface Api {
-  sleep: (date: String) => Promise<void>;
+  sleep: (date: string) => Promise<void>;
 }
 
 export async function create(
