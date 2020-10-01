@@ -1,5 +1,6 @@
 import { Token } from "./auth";
 import { promises as fs } from "fs";
+import "firebase-admin";
 
 export interface RefreshTokenManager {
   persistToken: (token: Token) => Promise<void>;
@@ -17,4 +18,23 @@ export const FileTokenManager: RefreshTokenManager = {
     const token = await fs.readFile(FILE_NAME, encoding);
     return token;
   },
+};
+
+export const createFirebaseTokenManager = (
+  firestore: FirebaseFirestore.Firestore
+): RefreshTokenManager => {
+  const path = "/fitbit/utils";
+  const id = "refreshToken";
+  const docHandle = () => firestore.collection(path).doc(id);
+  return {
+    persistToken: async (token) => {
+      await docHandle().set({
+        refreshToken: token,
+      });
+    },
+    fetchToken: async () => {
+      const document = await docHandle().get();
+      return document.data().refreshToken;
+    },
+  };
 };
