@@ -23,7 +23,7 @@ export const FileTokenManager: RefreshTokenManager = {
 export const createFirebaseTokenManager = (
   firestore: FirebaseFirestore.Firestore
 ): RefreshTokenManager => {
-  const path = "/fitbit/utils";
+  const path = "/fitbit/utils/token";
   const id = "refreshToken";
   const docHandle = () => firestore.collection(path).doc(id);
   return {

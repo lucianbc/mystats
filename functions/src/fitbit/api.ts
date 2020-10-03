@@ -16,9 +16,9 @@ export async function create(
   const token = await auth.authenticate(key, refreshTokenManager);
   return {
     sleep: async (date: metrics.Date) => {
-      const path = `/fitbit/sleep/${date}.json`;
+      const path = `/fitbit/sleep/byDay/${date}.json`;
       const sleep = await metrics.sleep(token.access_token, userId, date);
-      persistor.persist(path, sleep);
+      await persistor.persist(path, sleep);
     },
   };
 }
