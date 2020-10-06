@@ -5,6 +5,8 @@ import { AuthKey } from "./fitbit/auth";
 import { createFirebaseTokenManager } from "./fitbit/refreshTokenManager";
 import { createFirebasePersistor } from "./persistence";
 import { isValidDate } from "./validators";
+import * as moment from "moment";
+import { DATE_FORMAT } from "./fitbit/metrics";
 
 const config = functions.config();
 const adminInstance = admin.initializeApp(config.firebase);
@@ -30,6 +32,19 @@ export const setToken = functions.https.onRequest(async (request, response) => {
   await fitbit.persistToken(token);
   response.send("Succesfully written token");
 });
+
+const timeZone = "Europe/London";
+export const scheduledStats = functions.pubsub
+  .schedule("00 23 * * *")
+  .onRun(async () => {
+    const date = moment(
+      new Date().toLocaleString("en-UK", { timeZone })
+    ).format(DATE_FORMAT);
+    functions.logger.info(`Mystats schedule running now with date ${date}`);
+    const fitbit = await createFitbit(config, firestore);
+    await fitbit.sleep(date);
+    functions.logger.info(`Finished running for date ${date}`);
+  });
 
 const createFitbit = async (
   config: ReturnType<typeof functions.config>,
