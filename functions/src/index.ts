@@ -1,23 +1,20 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import * as moment from "moment";
-import { DATE_FORMAT } from "./fitbit/metrics";
 import { create } from "./fitbit/api";
 import { AuthKey } from "./fitbit/auth";
 import { createFirebaseTokenManager } from "./fitbit/refreshTokenManager";
 import { createFirebasePersistor } from "./persistence";
+import { isValidDate } from "./validators";
 
 const config = functions.config();
 const adminInstance = admin.initializeApp(config.firebase);
 const firestore = adminInstance.firestore();
 
 export const myStats = functions.https.onRequest(async (request, response) => {
-  functions.logger.info("Hello, logs", { structuredData: true });
   const date = request.query["date"] as string;
-  if (!isValid(date as string)) {
-    response
-      .status(400)
-      .send(`Date ${date} is not valid. Please use the format ${DATE_FORMAT}`);
+  const validation = isValidDate(date);
+  if (validation !== true) {
+    response.status(400).send(validation);
     return;
   }
 
@@ -48,8 +45,4 @@ const createFitbit = async (
   const persistor = createFirebasePersistor(firestore);
   const fitbitApi = await create(key, tokenMgr, userId, persistor);
   return fitbitApi;
-};
-
-export const isValid = (date: string | undefined) => {
-  return date && moment(date, DATE_FORMAT, true).isValid();
 };
