@@ -36,6 +36,7 @@ export const setToken = functions.https.onRequest(async (request, response) => {
 const timeZone = "Europe/London";
 export const scheduledStats = functions.pubsub
   .schedule("00 23 * * *")
+  .timeZone(timeZone)
   .onRun(async () => {
     const date = moment(
       new Date().toLocaleString("en-UK", { timeZone })
